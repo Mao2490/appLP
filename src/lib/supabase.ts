@@ -40,6 +40,9 @@ export interface Novedad {
   responsable_id?: string
   responsable?: Perfil
   foto_url?: string
+  // Agregamos estas dos para que no den error:
+  fecha: string     
+  hora: string      
   created_at: string
   updated_at: string
 }
