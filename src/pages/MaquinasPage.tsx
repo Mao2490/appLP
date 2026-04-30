@@ -27,7 +27,7 @@ export default function MaquinasPage() {
       width: 300, margin: 2,
       color: { dark: '#1a3a6b', light: '#ffffff' }
     })
-    setQrModal({ nombre: maq.nombre, url })
+    setQrModal({ nombre: maq.name, url })
   }
 
   function descargarQR() {
@@ -40,7 +40,7 @@ export default function MaquinasPage() {
 
   const filtradas = maquinas.filter(m =>
     !busqueda ||
-    m.nombre.toLowerCase().includes(busqueda.toLowerCase()) ||
+    m.name.toLowerCase().includes(busqueda.toLowerCase()) ||
     m.ubicacion?.toLowerCase().includes(busqueda.toLowerCase()) ||
     m.marca?.toLowerCase().includes(busqueda.toLowerCase())
   )
@@ -79,10 +79,10 @@ export default function MaquinasPage() {
           {filtradas.map(maq => (
             <div key={maq.id} className="bg-white rounded-xl border border-gray-100 shadow-sm p-4 hover:shadow-md transition-shadow">
               {maq.foto_url && (
-                <img src={maq.foto_url} alt={maq.nombre} className="w-full h-32 object-cover rounded-lg mb-3 border border-gray-100"/>
+                <img src={maq.foto_url} alt={maq.name} className="w-full h-32 object-cover rounded-lg mb-3 border border-gray-100"/>
               )}
               <div className="flex items-start justify-between gap-2 mb-2">
-                <h3 className="text-sm font-700 text-brand-dark leading-tight">{maq.nombre}</h3>
+                <h3 className="text-sm font-700 text-brand-dark leading-tight">{maq.name}</h3>
               </div>
               <div className="space-y-1 mb-4">
                 {maq.marca && <p className="text-xs text-gray-400">{maq.marca} {maq.modelo}</p>}

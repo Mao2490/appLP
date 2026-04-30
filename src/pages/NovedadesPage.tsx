@@ -41,6 +41,7 @@ export default function NovedadesPage() {
     setNovedades((data as any) ?? [])
     setCargando(false)
   }
+  
 
   async function cambiarEstado(id: string, estadoActual: string) {
     const ciclo = ['Pendiente', 'En proceso', 'Resuelto']
@@ -117,7 +118,7 @@ export default function NovedadesPage() {
               <div className="flex items-start justify-between gap-3 flex-wrap">
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 flex-wrap mb-1">
-                    <Link to={`/maquinas/${nov.maquina_id}`} className="text-sm font-700 text-brand-dark hover:text-brand-mid transition-colors">
+                    <Link to={`/maquinas/${nov.maquina}`} className="text-sm font-700 text-brand-dark hover:text-brand-mid transition-colors">
                       {(nov.maquina as any)?.name ?? '—'}
                     </Link>
                     <span className={`... ${badgePrioridad(nov.priority)}`}>{nov.priority}</span>

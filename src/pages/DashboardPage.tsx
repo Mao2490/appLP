@@ -158,17 +158,17 @@ export default function DashboardPage() {
             )}
             {novedades.map(nov => (
               <div key={nov.id} className="flex items-start gap-3 px-5 py-3.5">
-                <div className={`w-2 h-2 rounded-full mt-1.5 flex-shrink-0 ${dotColor(nov.estado)}`}/>
+                <div className={`w-2 h-2 rounded-full mt-1.5 flex-shrink-0 ${dotColor(nov.status_after)}`}/>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 flex-wrap">
                     <span className="text-sm font-600 text-brand-dark truncate">
                       {(nov.maquina as any)?.nombre ?? '—'}
                     </span>
-                    <span className={`text-[10px] font-500 px-2 py-0.5 rounded-full ${badgePrioridad(nov.prioridad)}`}>
-                      {nov.prioridad}
+                    <span className={`text-[10px] font-500 px-2 py-0.5 rounded-full ${badgePrioridad(nov.priority)}`}>
+                      {nov.priority}
                     </span>
-                    <span className={`text-[10px] font-500 px-2 py-0.5 rounded-full ${badgeEstado(nov.estado)}`}>
-                      {nov.estado}
+                    <span className={`text-[10px] font-500 px-2 py-0.5 rounded-full ${badgeEstado(nov.status_after)}`}>
+                      {nov.status_after}
                     </span>
                   </div>
                   <p className="text-xs text-gray-400 mt-0.5 truncate">{nov.descripcion}</p>

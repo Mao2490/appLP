@@ -69,7 +69,7 @@ export interface Proveedor {
   email?: string
   direccion?: string
   servicios?: string
-  created_at: string
+  created_at?: string
 }
 
 export interface TokenTecnico {
@@ -79,5 +79,5 @@ export interface TokenTecnico {
   creado_por: string
   usado: boolean
   expira_at: string
-  created_at: string
+  created_at?: string
 }
