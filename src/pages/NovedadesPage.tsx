@@ -32,7 +32,7 @@ export default function NovedadesPage() {
     setCargando(true)
     let q = supabase
       .from('maintenance_logs')
-      .select('*, maquina:machines(name), responsable:perfiles(full_name)')
+      .select('*, maquina:machines(name), responsable:profiles(full_name)')
       .order('created_at', { ascending: false })
     // 'status_after' y 'priority' son los nombres reales en tu tabla
     if (filtroEstado) q = q.eq('status_after', filtroEstado)
@@ -118,7 +118,7 @@ export default function NovedadesPage() {
               <div className="flex items-start justify-between gap-3 flex-wrap">
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 flex-wrap mb-1">
-                    <Link to={`/maquinas/${nov.maquina}`} className="text-sm font-700 text-brand-dark hover:text-brand-mid transition-colors">
+                    <Link to={`/maquinas/${nov.machine_id}`} className="text-sm font-700 text-brand-dark hover:text-brand-mid transition-colors">
                       {(nov.maquina as any)?.name ?? '—'}
                     </Link>
                     <span className={`... ${badgePrioridad(nov.priority)}`}>{nov.priority}</span>
@@ -126,7 +126,7 @@ export default function NovedadesPage() {
                   </div>
                   <p className="text-sm text-gray-600 mb-2">{nov.descripcion}</p>
                   <div className="flex items-center gap-4 text-xs text-gray-400 flex-wrap">
-                    <span>📅 {nov.fecha} {nov.hora}</span>
+                    <span>📅 {new Date(nov.created_at).toLocaleDateString('es-CO')}</span>
                     <span>👤 {(nov.responsable as any)?.full_name ?? 'Sin asignar'}</span>
                     {nov.tipo_falla && <span>🔧 {nov.tipo_falla}</span>}
                   </div>

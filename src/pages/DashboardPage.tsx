@@ -162,7 +162,7 @@ export default function DashboardPage() {
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 flex-wrap">
                     <span className="text-sm font-600 text-brand-dark truncate">
-                      {(nov.maquina as any)?.nombre ?? '—'}
+                      {(nov.maquina as any)?.name ?? '—'}
                     </span>
                     <span className={`text-[10px] font-500 px-2 py-0.5 rounded-full ${badgePrioridad(nov.priority)}`}>
                       {nov.priority}
@@ -173,7 +173,7 @@ export default function DashboardPage() {
                   </div>
                   <p className="text-xs text-gray-400 mt-0.5 truncate">{nov.descripcion}</p>
                   <p className="text-[10px] text-gray-300 mt-1">
-                    {nov.fecha} {nov.hora} · {(nov.responsable as any)?.nombre ?? 'Sin asignar'}
+                    {new Date(nov.created_at).toLocaleDateString('es-CO')} · {(nov.responsable as any)?.full_name ?? 'Sin asignar'}
                   </p>
                 </div>
               </div>

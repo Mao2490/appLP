@@ -17,7 +17,7 @@ export default function MaquinasPage() {
 
   async function cargar() {
     setCargando(true)
-    const { data } = await supabase.from('maquinas').select('*').order('nombre')
+    const { data } = await supabase.from('machines').select('*').order('name')
     setMaquinas(data ?? [])
     setCargando(false)
   }

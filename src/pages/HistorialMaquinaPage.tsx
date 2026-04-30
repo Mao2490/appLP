@@ -28,8 +28,7 @@ export default function HistorialMaquinaPage() {
       supabase.from('maintenance_logs')
         .select('*, responsable:profiles(full_name)')
         .eq('machine_id', maqId)
-        .order('fecha', { ascending: false })
-        .order('hora', { ascending: false })
+        .order('created_at', { ascending: false })
     ])
     setMaquina(maq)
     setNovedades((novs as any) ?? [])
@@ -113,14 +112,14 @@ export default function HistorialMaquinaPage() {
                   </div>
                   <span className="text-xs text-gray-400">{new Date(nov.created_at).toLocaleDateString()} · {new Date(nov.created_at).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>
                 </div>
-                <p className="text-sm text-gray-700 mb-2">{nov.descripcion}</p>
+                <p className="text-sm text-gray-700 mb-2">{(nov as any).description ?? nov.descripcion}</p>
                 <div className="flex items-center justify-between">
                   <p className="text-xs text-gray-400">
                     👤 {(nov.responsable as any)?.full_name ?? 'Sin asignar'}
                   </p>
                   {nov.foto_url && (
                     <a href={nov.foto_url} target="_blank" rel="noreferrer">
-                      <img src={nov.foto_url} alt="foto" className="w-10 h-10 object-cover rounded-lg border border-gray-100"/>
+                      <img src={nov.foto_url} alt="foto" className="w-full h-48 mt-2 object-cover rounded-lg border border-gray-100"/>
                     </a>
                   )}
                 </div>
