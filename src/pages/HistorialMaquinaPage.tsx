@@ -17,6 +17,8 @@ export default function HistorialMaquinaPage() {
   const [novedades, setNovedades] = useState<Novedad[]>([])
   const [cargando, setCargando] = useState(true)
   const [confirmarEliminar, setConfirmarEliminar] = useState<string | null>(null)
+  const [editando, setEditando] = useState<Novedad | null>(null)
+  const [editDesc, setEditDesc] = useState('')
   useEffect(() => {
     if (id) cargar(id)
   }, [id])
@@ -45,6 +47,23 @@ async function eliminarNovedad() {
   setNovedades(prev => prev.filter(n => n.id !== confirmarEliminar))
   setConfirmarEliminar(null)
 }
+
+async function guardarEdicion() {
+  if (!editando) return
+
+  const result = await supabase
+    .from('maintenance_logs')
+    .update({ description: editDesc })
+    .eq('id', editando.id)
+
+  console.log('edicion result:', result.error)
+
+  setNovedades(prev =>
+    prev.map(n => n.id === editando.id ? { ...n, description: editDesc } : n)
+  )
+  setEditando(null)
+}
+
   async function cargar(maqId: string) {
     setCargando(true)
     const [{ data: maq }, { data: novs }] = await Promise.all([
@@ -146,6 +165,12 @@ async function eliminarNovedad() {
                   <div className="flex items-center gap-3">
                     <span className="text-xs text-gray-400">{new Date(nov.created_at).toLocaleDateString()} · {new Date(nov.created_at).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>
                     <button
+                      onClick={() => { setEditando(nov); setEditDesc((nov as any).description ?? nov.descripcion ?? '') }}
+                      className="text-xs text-blue-400 hover:text-blue-600 transition-colors"
+                    >
+                      ✏️ Editar
+                    </button>
+                    <button
                       onClick={() => setConfirmarEliminar(nov.id)}
                       className="text-xs text-red-400 hover:text-red-600 transition-colors"
                     >
@@ -191,6 +216,35 @@ async function eliminarNovedad() {
                 className="flex-1 py-2 rounded-xl bg-red-500 text-white text-sm font-600 hover:bg-red-600"
               >
                 Eliminar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+      {/* Modal editar reporte */}
+      {editando && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 px-4">
+          <div className="bg-white rounded-2xl p-6 max-w-sm w-full shadow-xl">
+            <h3 className="text-base font-bold text-gray-800 mb-4">Editar reporte</h3>
+            <textarea
+              value={editDesc}
+              onChange={(e) => setEditDesc(e.target.value)}
+              rows={4}
+              className="w-full text-sm border border-gray-200 rounded-xl px-3 py-2 focus:outline-none focus:border-brand-mid resize-none"
+              placeholder="Descripción del problema..."
+            />
+            <div className="flex gap-3 mt-4">
+              <button
+                onClick={() => setEditando(null)}
+                className="flex-1 py-2 rounded-xl border border-gray-200 text-sm text-gray-600 hover:bg-gray-50"
+              >
+                Cancelar
+              </button>
+              <button
+                onClick={guardarEdicion}
+                className="flex-1 py-2 rounded-xl bg-brand-mid text-white text-sm font-600 hover:bg-brand-dark"
+              >
+                Guardar
               </button>
             </div>
           </div>

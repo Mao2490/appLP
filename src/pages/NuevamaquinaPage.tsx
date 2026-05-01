@@ -11,16 +11,27 @@ export default function NuevaMaquinaPage() {
   const [subiendo, setSubiendo] = useState(false)
 
   const [form, setForm] = useState({
-    nombre: '', marca: '', modelo: '', serial: '',
+    name: '', marca: '', modelo: '', serial: '',
     ubicacion: '', fecha_adquisicion: '', notas: '', foto_url: ''
   })
 
   useEffect(() => { if (esEdicion) cargar() }, [id])
 
   async function cargar() {
-    const { data } = await supabase.from('maquinas').select('*').eq('id', id).single()
-    if (data) setForm(data as any)
+  const { data } = await supabase.from('machines').select('*').eq('id', id).single()
+  if (data) {
+    setForm({
+      name: data.name ?? '',
+      marca: data.marca ?? '',
+      modelo: data.modelo ?? '',
+      serial: data.serial ?? '',
+      ubicacion: data.ubicacion ?? '',
+      fecha_adquisicion: data.fecha_adquisicion ?? '',
+      notas: data.notas ?? '',
+      foto_url: data.foto_url ?? ''
+    })
   }
+}
 
   function set(campo: string, valor: string) {
     setForm(f => ({ ...f, [campo]: valor }))
@@ -42,13 +53,16 @@ export default function NuevaMaquinaPage() {
 
   async function guardar(e: React.FormEvent) {
     e.preventDefault()
-    if (!form.nombre.trim()) { toast.error('Ingresa el nombre'); return }
+    if (!form.name.trim()) { toast.error('Ingresa el nombre'); return }
     setGuardando(true)
+
+    const { id: _id, created_at, ...datos } = form as any
+
     let error
     if (esEdicion) {
-      ({ error } = await supabase.from('maquinas').update(form).eq('id', id))
+      ({ error } = await supabase.from('machines').update(datos).eq('id', id))
     } else {
-      ({ error } = await supabase.from('maquinas').insert(form))
+      ({ error } = await supabase.from('machines').insert(datos))
     }
     if (error) { toast.error('Error al guardar'); setGuardando(false); return }
     toast.success(esEdicion ? 'Máquina actualizada' : 'Máquina registrada')
@@ -71,7 +85,7 @@ export default function NuevaMaquinaPage() {
       <form onSubmit={guardar} className="bg-white rounded-xl border border-gray-100 shadow-sm p-5 space-y-4">
         <div>
           <label className="block text-xs font-600 text-gray-500 mb-1.5">Nombre *</label>
-          <input value={form.nombre} onChange={e => set('nombre', e.target.value)} required
+          <input value={form.name} onChange={e => set('name', e.target.value)} required
             placeholder="Ej: Cinta caminadora #1"
             className="w-full px-3 py-2.5 text-sm border border-gray-200 rounded-lg focus:outline-none focus:border-brand-mid"/>
         </div>
