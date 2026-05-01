@@ -10,8 +10,9 @@ export default function MaquinasPage() {
   const [cargando, setCargando] = useState(true)
   const [busqueda, setBusqueda] = useState('')
   const [qrModal, setQrModal] = useState<{ nombre: string; url: string } | null>(null)
-
-  const esAdmin = perfil?.rol === 'admin' || perfil?.rol === 'dueno'
+  const [confirmarEliminar, setConfirmarEliminar] = useState<string | null>(null)
+  const esAdmin = perfil?.role?.toLowerCase() === 'admin' || perfil?.role?.toLowerCase() === 'dueno'
+  
 
   useEffect(() => { cargar() }, [])
 
@@ -37,6 +38,18 @@ export default function MaquinasPage() {
     a.download = `QR-${qrModal.nombre.replace(/\s+/g, '-')}.png`
     a.click()
   }
+
+  async function eliminarMaquina() {
+  if (!confirmarEliminar) return
+
+  await supabase
+    .from('machines')
+    .delete()
+    .eq('id', confirmarEliminar)
+
+  setMaquinas(prev => prev.filter(m => m.id !== confirmarEliminar))
+  setConfirmarEliminar(null)
+}
 
   const filtradas = maquinas.filter(m =>
     !busqueda ||
@@ -101,10 +114,16 @@ export default function MaquinasPage() {
                   QR
                 </button>
                 {esAdmin && (
-                  <Link to={`/maquinas/${maq.id}/editar`}
-                    className="px-3 py-2 text-xs border border-gray-200 text-gray-500 rounded-lg hover:border-brand-mid hover:text-brand-mid transition-colors">
-                    ✏️
-                  </Link>
+                  <>
+                    <Link to={`/maquinas/${maq.id}/editar`}
+                      className="px-3 py-2 text-xs border border-gray-200 text-gray-500 rounded-lg hover:border-brand-mid hover:text-brand-mid transition-colors">
+                      ✏️
+                    </Link>
+                    <button onClick={() => setConfirmarEliminar(maq.id)}
+                      className="px-3 py-2 text-xs border border-red-200 text-red-400 rounded-lg hover:bg-red-50 transition-colors">
+                      🗑️
+                    </button>
+                  </>
                 )}
               </div>
             </div>
@@ -133,6 +152,29 @@ export default function MaquinasPage() {
           </div>
         </div>
       )}
+      {/* Modal confirmar eliminar máquina */}
+{confirmarEliminar && (
+  <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 px-4">
+    <div className="bg-white rounded-2xl p-6 max-w-sm w-full shadow-xl">
+      <h3 className="text-base font-bold text-gray-800 mb-2">¿Eliminar máquina?</h3>
+      <p className="text-sm text-gray-500 mb-6">Se eliminará la máquina y no se puede deshacer.</p>
+      <div className="flex gap-3">
+        <button
+          onClick={() => setConfirmarEliminar(null)}
+          className="flex-1 py-2 rounded-xl border border-gray-200 text-sm text-gray-600 hover:bg-gray-50"
+        >
+          Cancelar
+        </button>
+        <button
+          onClick={eliminarMaquina}
+          className="flex-1 py-2 rounded-xl bg-red-500 text-white text-sm font-600 hover:bg-red-600"
+        >
+          Eliminar
+        </button>
+      </div>
+    </div>
+  </div>
+)}
     </div>
   )
 }

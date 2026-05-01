@@ -54,7 +54,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   async function cargarPerfil(userId: string) {
     const { data } = await supabase
-      .from('perfiles')
+      .from('profiles')
       .select('*')
       .eq('id', userId)
       .single()

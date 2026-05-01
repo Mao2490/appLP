@@ -11,7 +11,7 @@ export interface Perfil {
   id: string
   email: string
   nombre: string
-  rol: Rol
+  role: Rol
   avatar_url?: string
   created_at: string
 }
