@@ -210,7 +210,7 @@ export default function NuevaNovedadPage() {
         <div>
           <label className="block text-xs font-600 text-gray-500 mb-1.5">Foto de la falla</label>
           <div className="border-2 border-dashed border-gray-200 rounded-lg p-4 text-center hover:border-brand-mid transition-colors">
-            <input type="file" accept="image/*" capture="environment" onChange={subirFoto}
+            <input type="file" accept="image/*" onChange={subirFoto}
               className="hidden" id="foto-input"/>
             <label htmlFor="foto-input" className="cursor-pointer">
               {subiendo ? (
