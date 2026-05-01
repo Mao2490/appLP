@@ -16,7 +16,7 @@ export default function HistorialMaquinaPage() {
   const [maquina, setMaquina] = useState<Maquina | null>(null)
   const [novedades, setNovedades] = useState<Novedad[]>([])
   const [cargando, setCargando] = useState(true)
-
+  const [confirmarEliminar, setConfirmarEliminar] = useState<string | null>(null)
   useEffect(() => {
     if (id) cargar(id)
   }, [id])
@@ -34,15 +34,16 @@ export default function HistorialMaquinaPage() {
   )
 }
 
-async function eliminarNovedad(novId: string) {
-  if (!confirm('¿Seguro que quieres eliminar este reporte?')) return
+async function eliminarNovedad() {
+  if (!confirmarEliminar) return
 
   await supabase
     .from('maintenance_logs')
     .delete()
-    .eq('id', novId)
+    .eq('id', confirmarEliminar)
 
-  setNovedades(prev => prev.filter(n => n.id !== novId))
+  setNovedades(prev => prev.filter(n => n.id !== confirmarEliminar))
+  setConfirmarEliminar(null)
 }
   async function cargar(maqId: string) {
     setCargando(true)
@@ -145,7 +146,7 @@ async function eliminarNovedad(novId: string) {
                   <div className="flex items-center gap-3">
                     <span className="text-xs text-gray-400">{new Date(nov.created_at).toLocaleDateString()} · {new Date(nov.created_at).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>
                     <button
-                      onClick={() => eliminarNovedad(nov.id)}
+                      onClick={() => setConfirmarEliminar(nov.id)}
                       className="text-xs text-red-400 hover:text-red-600 transition-colors"
                     >
                       🗑️ Eliminar
@@ -172,6 +173,29 @@ async function eliminarNovedad(novId: string) {
           LP Fitness · Sistema de mantenimiento
         </p>
       </div>
+      {/* Modal confirmar eliminar */}
+      {confirmarEliminar && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 px-4">
+          <div className="bg-white rounded-2xl p-6 max-w-sm w-full shadow-xl">
+            <h3 className="text-base font-bold text-gray-800 mb-2">¿Eliminar reporte?</h3>
+            <p className="text-sm text-gray-500 mb-6">Esta acción no se puede deshacer.</p>
+            <div className="flex gap-3">
+              <button
+                onClick={() => setConfirmarEliminar(null)}
+                className="flex-1 py-2 rounded-xl border border-gray-200 text-sm text-gray-600 hover:bg-gray-50"
+              >
+                Cancelar
+              </button>
+              <button
+                onClick={eliminarNovedad}
+                className="flex-1 py-2 rounded-xl bg-red-500 text-white text-sm font-600 hover:bg-red-600"
+              >
+                Eliminar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
