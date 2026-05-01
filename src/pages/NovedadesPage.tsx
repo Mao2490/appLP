@@ -132,9 +132,9 @@ export default function NovedadesPage() {
                   </div>
                 </div>
                 <div className="flex items-center gap-2 flex-shrink-0">
-                  {nov.foto_url && (
-                    <a href={nov.foto_url} target="_blank" rel="noreferrer">
-                      <img src={nov.foto_url} alt="foto" className="w-12 h-12 object-cover rounded-lg border border-gray-100"/>
+                  {(nov as any).photo_url && (
+                    <a href={(nov as any).photo_url} target="_blank" rel="noreferrer">
+                      <img src={(nov as any).photo_url} alt="foto" className="w-12 h-12 object-cover rounded-lg border border-gray-100"/>
                     </a>
                   )}
                   {puedeEditar && (

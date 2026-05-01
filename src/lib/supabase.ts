@@ -39,7 +39,7 @@ export interface Novedad {
   priority: 'Normal' | 'Urgente' | 'Crítico'
   responsable_id?: string
   responsable?: Perfil
-  foto_url?: string
+  photo_url?: string
   // Agregamos estas dos para que no den error:
   fecha: string     
   hora: string      

@@ -117,9 +117,9 @@ export default function HistorialMaquinaPage() {
                   <p className="text-xs text-gray-400">
                     👤 {(nov.responsable as any)?.full_name ?? 'Sin asignar'}
                   </p>
-                  {nov.foto_url && (
-                    <a href={nov.foto_url} target="_blank" rel="noreferrer">
-                      <img src={nov.foto_url} alt="foto" className="w-full h-48 mt-2 object-cover rounded-lg border border-gray-100"/>
+                  {(nov as any).photo_url && (
+                    <a href={(nov as any).photo_url} target="_blank" rel="noreferrer">
+                      <img src={(nov as any).photo_url} alt="foto" className="w-full h-48 mt-2 object-cover rounded-lg border border-gray-100"/>
                     </a>
                   )}
                 </div>

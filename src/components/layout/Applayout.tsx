@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useAuth } from '@/hooks/useAuth'
 import toast from 'react-hot-toast'
-import { NavLink, Outlet, useNavigate, Link } from 'react-router-dom'
+import { NavLink, Outlet, useNavigate, Link, useLocation } from 'react-router-dom'
 
 const navItems = [
   {
@@ -63,6 +63,7 @@ const adminItems = [
 export default function AppLayout() {
   const { perfil, signOut, esTecnicoTemporal, nombreTecnicoTemporal } = useAuth()
   const navigate = useNavigate()
+  const location = useLocation()
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
   const esAdmin = perfil?.rol === 'admin'
@@ -256,14 +257,26 @@ export default function AppLayout() {
         <div className="flex-1 p-4 lg:p-6 pb-20 lg:pb-6">
           <Outlet />
         </div>
-        {/* ── BOTÓN FLOTANTE NUEVA NOVEDAD (solo móvil) ── */}
+        {/* ── BOTÓN FLOTANTE (solo móvil) ── */}
+        {location.pathname === '/novedades' && (
         <Link
           to="/novedades/nueva"
-          className="block fixed bottom-20 right-5 bg-brand-mid text-white w-10 h-10 rounded-full shadow-2xl flex items-center justify-center active:scale-95 transition-transform z-30">
+          className="fixed bottom-20 right-5 bg-brand-mid text-white w-10 h-10 rounded-full shadow-2xl flex items-center justify-center active:scale-95 transition-transform z-30">
           <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4"/>
           </svg>
         </Link>
+        )}
+        {location.pathname === '/maquinas' && (
+        <Link
+          to="/maquinas/nueva"
+          className="fixed bottom-20 right-5 bg-brand-mid text-white w-10 h-10 rounded-full shadow-2xl flex items-center justify-center active:scale-95 transition-transform z-30">
+          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4"/>
+          </svg>
+        </Link>
+        )}
+        
   
       </main>
     </div>
