@@ -43,9 +43,9 @@ export default function NuevaMaquinaPage() {
     setSubiendo(true)
     const ext = file.name.split('.').pop()
     const nombre = `maquinas/${Date.now()}.${ext}`
-    const { error } = await supabase.storage.from('fotos').upload(nombre, file)
+    const { error } = await supabase.storage.from('novedades').upload(nombre, file)
     if (error) { toast.error('Error subiendo foto'); setSubiendo(false); return }
-    const { data } = supabase.storage.from('fotos').getPublicUrl(nombre)
+    const { data } = supabase.storage.from('novedades').getPublicUrl(nombre)
     set('foto_url', data.publicUrl)
     setSubiendo(false)
     toast.success('Foto cargada')
