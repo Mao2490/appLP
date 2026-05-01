@@ -21,6 +21,17 @@ export default function HistorialMaquinaPage() {
     if (id) cargar(id)
   }, [id])
 
+  async function cambiarEstado(novId: string, nuevoEstado: string) {
+  await supabase
+    .from('maintenance_logs')
+    .update({ status_after: nuevoEstado as Novedad['status_after']})
+    .eq('id', novId)
+
+  setNovedades(prev =>
+    prev.map(n => n.id === novId ? { ...n, status_after: nuevoEstado as Novedad['status_after'] } : n)
+  )
+}
+
   async function cargar(maqId: string) {
     setCargando(true)
     const [{ data: maq }, { data: novs }] = await Promise.all([
@@ -104,6 +115,15 @@ export default function HistorialMaquinaPage() {
                     <span className={`text-[10px] font-600 px-2 py-0.5 rounded-full ${badgeEstado(nov.status_after)}`}>
                       {nov.status_after}
                     </span>
+                    <select
+                      value={nov.status_after}
+                      onChange={(e) => cambiarEstado(nov.id, e.target.value)}
+                      className="text-xs border border-gray-200 rounded-full px-2 py-0.5 text-gray-600 bg-white cursor-pointer"
+                    >
+                      <option>Pendiente</option>
+                      <option>En proceso</option>
+                      <option>Resuelto</option>
+                      </select>
                     {nov.tipo_falla && (
                       <span className="text-[10px] text-gray-400 bg-gray-100 px-2 py-0.5 rounded-full">
                         {nov.tipo_falla}
