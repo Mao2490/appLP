@@ -22,10 +22,12 @@ export default function HistorialMaquinaPage() {
   }, [id])
 
   async function cambiarEstado(novId: string, nuevoEstado: string) {
-  await supabase
-    .from('maintenance_logs')
-    .update({ status_after: nuevoEstado as Novedad['status_after']})
-    .eq('id', novId)
+    const result = await supabase
+      .from('maintenance_logs')
+      .update({ status_after: nuevoEstado as Novedad['status_after']})
+      .eq('id', novId)
+
+    console.log('error:', result.error)
 
   setNovedades(prev =>
     prev.map(n => n.id === novId ? { ...n, status_after: nuevoEstado as Novedad['status_after'] } : n)
