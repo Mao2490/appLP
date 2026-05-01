@@ -34,6 +34,16 @@ export default function HistorialMaquinaPage() {
   )
 }
 
+async function eliminarNovedad(novId: string) {
+  if (!confirm('¿Seguro que quieres eliminar este reporte?')) return
+
+  await supabase
+    .from('maintenance_logs')
+    .delete()
+    .eq('id', novId)
+
+  setNovedades(prev => prev.filter(n => n.id !== novId))
+}
   async function cargar(maqId: string) {
     setCargando(true)
     const [{ data: maq }, { data: novs }] = await Promise.all([
@@ -132,7 +142,15 @@ export default function HistorialMaquinaPage() {
                       </span>
                     )}
                   </div>
-                  <span className="text-xs text-gray-400">{new Date(nov.created_at).toLocaleDateString()} · {new Date(nov.created_at).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>
+                  <div className="flex items-center gap-3">
+                    <span className="text-xs text-gray-400">{new Date(nov.created_at).toLocaleDateString()} · {new Date(nov.created_at).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>
+                    <button
+                      onClick={() => eliminarNovedad(nov.id)}
+                      className="text-xs text-red-400 hover:text-red-600 transition-colors"
+                    >
+                      🗑️ Eliminar
+                    </button>
+                  </div>
                 </div>
                 <p className="text-sm text-gray-700 mb-2">{(nov as any).description ?? nov.descripcion}</p>
                 <div className="flex items-center justify-between">
