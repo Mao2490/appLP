@@ -46,9 +46,20 @@ export default function NuevaNovedadPage() {
   }
 
   async function cargarNovedad() {
-    const { data } = await supabase.from('maintenance_logs').select('*').eq('id', id).single()
-    if (data) setForm(data as any)
+  const { data } = await supabase.from('maintenance_logs').select('*').eq('id', id).single()
+  if (data) {
+    setForm(f => ({
+      ...f,
+      maquina_id: data.machine_id ?? '',
+      descripcion: data.description ?? '',
+      tipo_falla: data.tipo_falla ?? '',
+      estado: data.status_after ?? 'Pendiente',
+      prioridad: data.priority ?? 'Normal',
+      responsable_id: data.technician_id ?? '',
+      foto_url: data.photo_url ?? '',
+    }))
   }
+}
 
   function set(campo: string, valor: string) {
     setForm(f => ({ ...f, [campo]: valor }))
