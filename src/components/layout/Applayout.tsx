@@ -58,6 +58,14 @@ const adminItems = [
       </svg>
     )
   },
+  {
+    to: '/usuarios', label: 'Usuarios',
+    icon: (
+      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197"/>
+      </svg>
+    )
+  },
 ]
 
 export default function AppLayout() {
@@ -66,8 +74,8 @@ export default function AppLayout() {
   const location = useLocation()
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
-  const esAdmin = perfil?.rol === 'admin'
-  const esDueno = perfil?.rol === 'dueno'
+  const esAdmin = perfil?.role === 'admin'
+  const esDueno = perfil?.role === 'dueno'
   const puedeGestionar = esAdmin || esDueno
 
   const nombre = esTecnicoTemporal
@@ -158,7 +166,7 @@ export default function AppLayout() {
             <div className="min-w-0">
               <p className="text-white/80 text-xs font-500 truncate">{nombre}</p>
               <p className="text-white/35 text-[10px] truncate">
-                {esTecnicoTemporal ? 'Técnico' : perfil?.rol}
+                {esTecnicoTemporal ? 'Técnico' : perfil?.role}
               </p>
             </div>
           </div>

@@ -24,7 +24,7 @@ export default function HistorialMaquinaPage() {
   }, [id])
 
   async function cambiarEstado(novId: string, nuevoEstado: string) {
-    const result = await supabase
+    await supabase
       .from('maintenance_logs')
       .update({ status_after: nuevoEstado as Novedad['status_after']})
       .eq('id', novId)
@@ -49,12 +49,10 @@ async function eliminarNovedad() {
 async function guardarEdicion() {
   if (!editando) return
 
-  const result = await supabase
+  await supabase
     .from('maintenance_logs')
     .update({ description: editDesc })
     .eq('id', editando.id)
-
-  console.log('edicion result:', result.error)
 
   setNovedades(prev =>
     prev.map(n => n.id === editando.id ? { ...n, description: editDesc } : n)

@@ -12,6 +12,7 @@ import HistorialMaquinaPage from '@/pages/HistorialMaquinaPage'
 import ComprasPage from '@/pages/ComprasPage'
 import ProveedoresPage from '@/pages/ProveedoresPage'
 import TokensPage from '@/pages/TokensPage'
+import UsuariosPage from '@/pages/UsuariosPage'
 
 function PrivateRoute({ children }: { children: React.ReactNode }) {
   const { user, loading, esTecnicoTemporal } = useAuth()
@@ -57,6 +58,7 @@ function AppRoutes() {
         <Route path="compras" element={<ComprasPage/>}/>
         <Route path="proveedores" element={<ProveedoresPage/>}/>
         <Route path="tokens" element={<AdminRoute><TokensPage/></AdminRoute>}/>
+        <Route path="usuarios" element={<AdminRoute><UsuariosPage/></AdminRoute>}/>
       </Route>
 
       <Route path="*" element={<Navigate to="/dashboard" replace/>}/>
