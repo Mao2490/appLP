@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { supabase } from '@/lib/supabase'
 import toast from 'react-hot-toast'
+import { useAuth } from '@/hooks/useAuth'
 
 const ROLES = ['admin', 'tecnico', 'dueno']
 
@@ -9,6 +10,9 @@ export default function UsuariosPage() {
   const [cargando, setCargando] = useState(true)
   const [mostrarForm, setMostrarForm] = useState(false)
   const [creando, setCreando] = useState(false)
+  const [confirmarEliminar, setConfirmarEliminar] = useState<string | null>(null)
+  const { perfil } = useAuth()
+  const esDueno = perfil?.role?.trim() === 'dueno'
   const [nuevoUsuario, setNuevoUsuario] = useState({
     email: '', password: '', nombre: '', rol: 'tecnico'
   })
@@ -57,6 +61,19 @@ export default function UsuariosPage() {
   setNuevoUsuario({ email: '', password: '', nombre: '', rol: 'tecnico' })
   cargar()
   setCreando(false)
+  }
+
+  async function eliminarUsuario() {
+  if (!confirmarEliminar) return
+
+  await supabase
+    .from('profiles')
+    .delete()
+    .eq('id', confirmarEliminar)
+
+  setUsuarios(prev => prev.filter(u => u.id !== confirmarEliminar))
+  setConfirmarEliminar(null)
+  toast.success('Usuario eliminado')
   }
 
   return (
@@ -138,15 +155,42 @@ export default function UsuariosPage() {
                 <select
                   value={u.role ?? 'tecnico'}
                   onChange={e => cambiarRol(u.id, e.target.value)}
+                  disabled={!esDueno}
                   className="text-xs border border-gray-200 rounded-lg px-2 py-1.5 text-gray-600 bg-white cursor-pointer focus:outline-none focus:border-brand-mid"
                 >
                   {ROLES.map(r => <option key={r} value={r}>{r}</option>)}
                 </select>
+                {esDueno && (
+                  <button
+                    onClick={() => setConfirmarEliminar(u.id)}
+                    className="text-xs border border-red-200 text-red-400 px-2.5 py-1.5 rounded-lg hover:bg-red-50 transition-colors"
+                  >
+                    🗑️
+                  </button>
+                )}
               </div>
             ))}
           </div>
         )}
       </div>
+      {confirmarEliminar && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 px-4">
+          <div className="bg-white rounded-2xl p-6 max-w-sm w-full shadow-xl">
+            <h3 className="text-base font-bold text-gray-800 mb-2">¿Eliminar usuario?</h3>
+            <p className="text-sm text-gray-500 mb-6">Esta acción no se puede deshacer.</p>
+            <div className="flex gap-3">
+              <button onClick={() => setConfirmarEliminar(null)}
+                className="flex-1 py-2 rounded-xl border border-gray-200 text-sm text-gray-600 hover:bg-gray-50">
+                Cancelar
+              </button>
+              <button onClick={eliminarUsuario}
+                className="flex-1 py-2 rounded-xl bg-red-500 text-white text-sm font-600 hover:bg-red-600">
+                Eliminar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
