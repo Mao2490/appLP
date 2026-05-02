@@ -29,8 +29,6 @@ export default function HistorialMaquinaPage() {
       .update({ status_after: nuevoEstado as Novedad['status_after']})
       .eq('id', novId)
 
-    console.log('error:', result.error)
-
   setNovedades(prev =>
     prev.map(n => n.id === novId ? { ...n, status_after: nuevoEstado as Novedad['status_after'] } : n)
   )
