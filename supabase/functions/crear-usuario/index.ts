@@ -12,13 +12,21 @@ serve(async (req) => {
   }
 
   try {
-    const { email, password, nombre, rol } = await req.json()
+    const { accion, email, password, nombre, rol, userId } = await req.json()
 
     const supabase = createClient(
       Deno.env.get('SUPABASE_URL')!,
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
     )
 
+    if (accion === 'eliminar') {
+      await supabase.auth.admin.deleteUser(userId, true)
+      return new Response(JSON.stringify({ ok: true }), {
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      })
+    }
+
+    // Crear usuario
     const { data, error } = await supabase.auth.admin.createUser({
       email,
       password,

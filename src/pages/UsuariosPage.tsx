@@ -66,6 +66,15 @@ export default function UsuariosPage() {
   async function eliminarUsuario() {
   if (!confirmarEliminar) return
 
+  // Eliminar de auth via Edge Function
+  await supabase.functions.invoke('crear-usuario', {
+    body: { accion: 'eliminar', userId: confirmarEliminar },
+    headers: {
+      Authorization: `Bearer ${(await supabase.auth.getSession()).data.session?.access_token}`
+    }
+  })
+
+  // Eliminar de profiles
   await supabase
     .from('profiles')
     .delete()
@@ -74,7 +83,7 @@ export default function UsuariosPage() {
   setUsuarios(prev => prev.filter(u => u.id !== confirmarEliminar))
   setConfirmarEliminar(null)
   toast.success('Usuario eliminado')
-  }
+}
 
   return (
     <div className="space-y-5 max-w-2xl">
