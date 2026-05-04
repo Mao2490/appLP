@@ -64,6 +64,13 @@ export default function NuevoEventoPage() {
 
       if (result.error) throw result.error
       toast.success(esEdicion ? 'Evento actualizado' : 'Evento creado')
+      if (!esEdicion) {
+        await supabase.from('notificaciones').insert({
+           titulo: '📅 Nuevo evento',
+           mensaje: `Se agregó: ${form.titulo}`,
+           leida: false
+        })
+      }
       navigate('/eventos')
     } catch (error: any) {
       toast.error(`Error: ${error.message}`)

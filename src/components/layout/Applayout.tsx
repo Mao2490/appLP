@@ -1,7 +1,8 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useAuth } from '@/hooks/useAuth'
 import toast from 'react-hot-toast'
 import { NavLink, Outlet, useNavigate, Link, useLocation } from 'react-router-dom'
+import { supabase } from '@/lib/supabase'
 
 const navItems = [
   {
@@ -81,6 +82,37 @@ export default function AppLayout() {
   const navigate = useNavigate()
   const location = useLocation()
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const [notifs, setNotifs] = useState<{id: string, titulo: string, mensaje: string}[]>([])
+  const [verNotifs, setVerNotifs] = useState(false)
+
+  useEffect(() => {
+  // Cargar notificaciones existentes
+  async function cargarNotifs() {
+    const { data } = await supabase
+      .from('notificaciones')
+      .select('*')
+      .eq('leida', false)
+      .order('created_at', { ascending: false })
+    setNotifs((data as any) ?? [])
+  }
+  cargarNotifs()
+
+  // Escuchar nuevas notificaciones en tiempo real
+  const canal = supabase
+    .channel('notificaciones-realtime')
+    .on('postgres_changes', {
+      event: 'INSERT',
+      schema: 'public',
+      table: 'notificaciones'
+    }, (payload) => {
+      const n = payload.new as any
+      setNotifs(prev => [n, ...prev])
+      toast.success(`${n.titulo}: ${n.mensaje}`, { duration: 5000 })
+    })
+    .subscribe()
+  return () => { supabase.removeChannel(canal) }
+  }, [])
+    
 
   const esAdmin = perfil?.role === 'admin'
   const esDueno = perfil?.role === 'dueno'
@@ -201,6 +233,17 @@ export default function AppLayout() {
             </div>
           </div>
           <div className="flex items-center gap-3">
+            {/* Campana notificaciones */}
+            <button onClick={() => setVerNotifs(!verNotifs)} className="relative text-white">
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
+              </svg>
+              {notifs.length > 0 && (
+                <span className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 rounded-full text-[10px] flex items-center justify-center">
+                  {notifs.length}
+                </span>
+              )}
+            </button>
             <div className="w-7 h-7 rounded-full bg-brand-mid flex items-center justify-center text-white text-[10px] font-700">
               {iniciales}
             </div>
@@ -211,6 +254,30 @@ export default function AppLayout() {
             </button>
           </div>
         </header>
+        {verNotifs && (
+          <div className="absolute top-14 right-4 bg-white rounded-xl shadow-xl border border-gray-100 z-50 w-72">
+            <div className="px-4 py-3 border-b border-gray-50 flex justify-between items-center">
+              <span className="text-sm font-600 text-brand-dark">Notificaciones</span>
+              <button onClick={() => { setNotifs([]); setVerNotifs(false) }} className="text-xs text-gray-400 hover:text-red-400">Limpiar</button>
+            </div>
+            {notifs.length === 0 ? (
+              <p className="text-sm text-gray-400 text-center py-6">Sin notificaciones</p>
+            ) : (
+              notifs.map(n => (
+                <div key={n.id} className="px-4 py-3 border-b border-gray-50 flex items-start justify-between gap-2">
+                  <div>
+                    <p className="text-xs text-gray-700 font-600">{n.titulo}</p>
+                    <p className="text-xs text-gray-500">{n.mensaje}</p>
+                </div>
+                <button onClick={async () => {
+                  await supabase.from('notificaciones').update({ leida: true }).eq('id', n.id)
+                  setNotifs(prev => prev.filter(x => x.id !== n.id))
+                }} className="text-[10px] text-gray-300 hover:text-red-400 flex-shrink-0">✕</button>
+              </div>
+            ))
+            )}
+          </div>
+        )}
 
         {/* Mobile slide menu */}
         {mobileMenuOpen && (
