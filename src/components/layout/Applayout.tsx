@@ -258,7 +258,11 @@ export default function AppLayout() {
           <div className="absolute top-14 right-4 bg-white rounded-xl shadow-xl border border-gray-100 z-50 w-72">
             <div className="px-4 py-3 border-b border-gray-50 flex justify-between items-center">
               <span className="text-sm font-600 text-brand-dark">Notificaciones</span>
-              <button onClick={() => { setNotifs([]); setVerNotifs(false) }} className="text-xs text-gray-400 hover:text-red-400">Limpiar</button>
+              <button onClick={async () => {
+                await supabase.from('notificaciones').update({ leida: true }).eq('leida', false)
+                setNotifs([])
+                setVerNotifs(false)
+              }} className="text-xs text-gray-400 hover:text-red-400">Limpiar</button>
             </div>
             {notifs.length === 0 ? (
               <p className="text-sm text-gray-400 text-center py-6">Sin notificaciones</p>
