@@ -81,3 +81,17 @@ export interface TokenTecnico {
   expira_at: string
   created_at?: string
 }
+
+export interface Evento {
+  id: string
+  titulo: string
+  descripcion?: string
+  tipo?: string
+  fecha: string
+  hora?: string
+  responsable_id?: string
+  responsable_nombre?: string
+  responsable?: Perfil
+  created_by?: string
+  created_at: string
+}
